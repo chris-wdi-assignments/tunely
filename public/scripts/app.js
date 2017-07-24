@@ -25,6 +25,8 @@ const handleNewSongSubmit = function (e) {
         success: function (album) {
           console.log('Here\'s the album we found!', album);
           // render new album
+          $(`.album[data-album-id="${album_id}"]`).remove();
+          renderAlbum(album);
         },
         error: function (e) {
           console.log('GET failed!');
