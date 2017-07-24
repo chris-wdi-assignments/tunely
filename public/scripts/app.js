@@ -40,11 +40,24 @@ const handleNewSongSubmit = function (e) {
   $('#songModal').modal('hide');
 };
 
+const handleAlbumDelete = function (e) {
+  const album_id = $(e.target).closest('.album').data('album-id');
+  $.ajax({
+    method: "DELETE",
+    url: "/api/albums/" + album_id,
+    success: () => {
+      $(`.album[data-album-id="${album_id}"]`).remove();
+      console.log('deleted album', album_id);
+    },
+    error: () => console.log('Error!')
+  });
+};
+
 $(document).ready(function() {
   console.log('app.js loaded!');
   $('#albums').on('click', '.add-song', function (e) {
     console.log('add-song clicked');
-    const id = $(this).closest('.album').data('album-id');
+    const id = $(event.target).closest('.album').data('album-id');
     console.log('id', id);
     $('#songModal').data('album-id', id);
     $('#songModal').modal('show');
@@ -52,6 +65,8 @@ $(document).ready(function() {
 
   $('#saveSong').on('click', handleNewSongSubmit);
 
+  $('#albums').on('click', '.delete-album', handleAlbumDelete);
+  
   $.ajax({
     method: 'GET',
     url: '/api/albums',
@@ -77,7 +92,6 @@ function renderMultipleAlbums(albums) {
 }
 
 function renderAlbum(album) {
-  console.log('rendering album', album);
   var songString = "";
   album.songs.forEach(function (song) {
     songString = `${songString} - (${song.trackNumber}) ${song.name}`
@@ -127,6 +141,7 @@ function renderAlbum(album) {
 
             <div class='panel-footer'>
               <button class="btn btn-primary add-song">Add Song</button>
+              <button class="btn btn-default delete-album">Delete Album</button>
             </div>
 
           </div>
